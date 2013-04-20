@@ -13,14 +13,13 @@ using System.Runtime.InteropServices;
 
 namespace XBMC_WebBrowser_KeyMapper
 {
-    public partial class Form1 : Form
+    public partial class FormMain : Form
     {
         [DllImport("User32.dll")]
         private static extern short GetAsyncKeyState(int vKey);
-        private ArrayList textBoxes;
         private String userDataFolder;
 
-        public Form1(String[] args)
+        public FormMain(String[] args)
         {
             InitializeComponent();
             userDataFolder = "";
@@ -28,24 +27,6 @@ namespace XBMC_WebBrowser_KeyMapper
             {
                 userDataFolder = args[0].Replace("\"", "");
             }
-
-            textBoxes = new ArrayList();
-            textBoxes.Add(textBox1);
-            textBoxes.Add(textBox2);
-            textBoxes.Add(textBox3);
-            textBoxes.Add(textBox4);
-            textBoxes.Add(textBox5);
-            textBoxes.Add(textBox6);
-            textBoxes.Add(textBox7);
-            textBoxes.Add(textBox8);
-            textBoxes.Add(textBox9);
-            textBoxes.Add(textBox10);
-            textBoxes.Add(textBox11);
-            textBoxes.Add(textBox12);
-            textBoxes.Add(textBox13);
-            textBoxes.Add(textBox14);
-            textBoxes.Add(textBox15);
-            textBoxes.Add(textBox16);
 
             String file = "";
             //When using Windows
@@ -94,13 +75,21 @@ namespace XBMC_WebBrowser_KeyMapper
                             textBox12.Text = spl[1].Trim();
                         else if (spl[0] == "EnterURL")
                             textBox13.Text = spl[1].Trim();
-                        else if (spl[0] == "Magnifier")
-                            textBox14.Text = spl[1].Trim();
-                        else if (spl[0] == "CloseWindow")
-                            textBox15.Text = spl[1].Trim();
                         else if (spl[0] == "ShowKeyboard")
+                            textBox14.Text = spl[1].Trim();
+                        else if (spl[0] == "Magnifier")
+                            textBox15.Text = spl[1].Trim();
+                        else if (spl[0] == "ShowFavourites")
                             textBox16.Text = spl[1].Trim();
-
+                        else if (spl[0] == "ShowShortcuts")
+                            textBox17.Text = spl[1].Trim();
+                        else if (spl[0] == "PressTAB")
+                            textBox18.Text = spl[1].Trim();
+                        else if (spl[0] == "PressESC")
+                            textBox19.Text = spl[1].Trim();
+                        else if (spl[0] == "CloseWindow")
+                            textBox20.Text = spl[1].Trim();
+                        
                     }
                 }
                 str.Close();
@@ -127,25 +116,29 @@ namespace XBMC_WebBrowser_KeyMapper
                 keys = keys.Trim();
                 if (keys == "Down" && !buttonSave.Focused && !buttonCancel.Focused)
                 {
-                    SendKeys.Send("{TAB}");
+                    this.SelectNextControl(ActiveControl, true, true, true, true);
                 }
                 else if (keys == "Up" && !buttonSave.Focused && !buttonCancel.Focused)
                 {
-                    SendKeys.Send("+{TAB}");
+                    this.SelectNextControl(ActiveControl, false, true, true, true);
+                }
+                else if (keys == "Enter" && !buttonSave.Focused && !buttonCancel.Focused)
+                {
+                    ((TextBox)ActiveControl).Text = "";
                 }
                 else if (keys != "")
                 {
-                    foreach (TextBox txt in textBoxes)
+                    foreach (Control control in this.Controls)
                     {
-                        if (txt.Focused)
+                        if (control is TextBox && ((TextBox)control).Focused)
                         {
                             String temp = keys;
                             if (temp.StartsWith("ShiftKey "))
                                 temp = temp.Substring(9);
                             if (temp.StartsWith("Menu "))
                                 temp = temp.Substring(5);
-                            txt.Text = temp;
-                            SendKeys.Send("{TAB}");
+                            ((TextBox)control).Text = temp;
+                            this.SelectNextControl(ActiveControl, true, true, true, true);
                             break;
                         }
                     }
@@ -187,9 +180,13 @@ namespace XBMC_WebBrowser_KeyMapper
             str.WriteLine("ZoomIn=" + textBox11.Text);
             str.WriteLine("ZoomOut=" + textBox12.Text);
             str.WriteLine("EnterURL=" + textBox13.Text);
-            str.WriteLine("Magnifier=" + textBox14.Text);
-            str.WriteLine("CloseWindow=" + textBox15.Text);
-            str.WriteLine("ShowKeyboard=" + textBox16.Text);
+            str.WriteLine("ShowKeyboard=" + textBox14.Text);
+            str.WriteLine("Magnifier=" + textBox15.Text);
+            str.WriteLine("ShowFavourites=" + textBox16.Text);
+            str.WriteLine("ShowShortcuts=" + textBox17.Text);
+            str.WriteLine("PressTAB=" + textBox18.Text);
+            str.WriteLine("PressESC=" + textBox19.Text);
+            str.WriteLine("CloseWindow=" + textBox20.Text);
             str.Close();
             Application.Exit();
         }
